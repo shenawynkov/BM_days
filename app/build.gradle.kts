@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlinx.serialization)
     kotlin("kapt")
 }
 
@@ -54,12 +55,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
-    implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation(libs.androidx.recyclerview)
-    kapt("com.github.bumptech.glide:compiler:4.15.1")
-    implementation("io.coil-kt:coil:2.4.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
