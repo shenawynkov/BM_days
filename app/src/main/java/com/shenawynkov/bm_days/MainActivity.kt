@@ -1,97 +1,82 @@
 package com.shenawynkov.bm_days
 
+import Contact
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.lifecycleScope
+import com.shenawynkov.bm_days.networking.RetrofitClient
 import com.shenawynkov.bm_days.ui.theme.BM_daysTheme
+import contacts
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
+    val postState = MutableStateFlow<String>("")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val contactsState = MutableStateFlow<List<Contact>>(emptyList())
+
         setContent {
             BM_daysTheme {
-               MainScreen(contacts)
+
+                DogScreen(postState) {
+
+                    updatePhoto()
+                }
+
             }
 
         }
+
+
+        updatePhoto()
+
+
+//        lifecycleScope.launch {
+//           postState.value = RetrofitClient.apiService.getPosts()
+//        }
+
+
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            fetchData().collect { newData ->
+//                contactsState.value += newData
+//            }
+//
+//
+//        }
+
+
     }
 
+    private fun updatePhoto() {
+        lifecycleScope.launch (Dispatchers.IO){
+            postState.value = RetrofitClient.dogApiService.getRandomPic().message
+        }
+
+    }
+
+    private fun fetchData() = flow {
+        var start = 0
+        var end = 20
+        repeat(5)
+        {
+            delay(5000)
+            emit(contacts.subList(start, end))
+            start += 20
+            end += 20
+
+        }
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
     }
 }
-val contacts = listOf(
-    Contact(
-        id = 1,
-        name = "Alice Johnson",
-        title = "Product Manager",
-        phone = "+1 (555) 123-4567",
-        imageURL = "https://randomuser.me/api/portraits/women/1.jpg"
-    ),
-    Contact(
-        id = 2,
-        name = "Michael Smith",
-        title = "Senior Developer",
-        phone = "+1 (555) 234-5678",
-        imageURL = "https://randomuser.me/api/portraits/men/2.jpg"
-    ),
-    Contact(
-        id = 3,
-        name = "Emma Brown",
-        title = "UX Designer",
-        phone = "+1 (555) 345-6789",
-        imageURL = "https://randomuser.me/api/portraits/women/3.jpg"
-    ),
-    Contact(
-        id = 4,
-        name = "James Wilson",
-        title = "Data Scientist",
-        phone = "+1 (555) 456-7890",
-        imageURL = "https://randomuser.me/api/portraits/men/4.jpg"
-    ),
-    Contact(
-        id = 5,
-        name = "Olivia Davis",
-        title = "Marketing Lead",
-        phone = "+1 (555) 567-8901",
-        imageURL = "https://randomuser.me/api/portraits/women/5.jpg"
-    ),
-    Contact(
-        id = 6,
-        name = "William Taylor",
-        title = "Backend Engineer",
-        phone = "+1 (555) 678-9012",
-        imageURL = "https://randomuser.me/api/portraits/men/6.jpg"
-    ),
-    Contact(
-        id = 7,
-        name = "Sophia Martinez",
-        title = "QA Engineer",
-        phone = "+1 (555) 789-0123",
-        imageURL = "https://randomuser.me/api/portraits/women/7.jpg"
-    ),
-    Contact(
-        id = 8,
-        name = "Benjamin Lee",
-        title = "Mobile Developer",
-        phone = "+1 (555) 890-1234",
-        imageURL = "https://randomuser.me/api/portraits/men/8.jpg"
-    ),
-    Contact(
-        id = 9,
-        name = "Ava Thompson",
-        title = "HR Manager",
-        phone = "+1 (555) 901-2345",
-        imageURL = "https://randomuser.me/api/portraits/women/9.jpg"
-    ),
-    Contact(
-        id = 10,
-        name = "Daniel Anderson",
-        title = "DevOps Engineer",
-        phone = "+1 (555) 012-3456",
-        imageURL = "https://randomuser.me/api/portraits/men/10.jpg"
-    )
-)

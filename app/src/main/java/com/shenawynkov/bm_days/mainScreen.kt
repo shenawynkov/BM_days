@@ -1,5 +1,6 @@
 package com.shenawynkov.bm_days
 
+import Contact
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,10 +35,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.shenawynkov.bm_days.ui.theme.DarkGReen
+import kotlinx.coroutines.flow.StateFlow
 
 
 @Composable
-fun MainScreen(contacts: List<Contact>) {
+fun MainScreen(list: StateFlow<List<Contact>>) {
+    val contacts by list.collectAsState()
 
     val context = LocalContext.current
 
