@@ -18,14 +18,19 @@ object RetrofitClient {
 
 
     val apiService = retrofit.create(ApiService::class.java)
+    // apiservice = ApiServiceImpl
 
 
     private val retrofitDOG = Retrofit.Builder().client(okHttpClient).baseUrl(DOG_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create()).build()
 
-    val dogApiService = retrofitDOG.create(DogApiService::class.java)
+    val dogApiService = retrofitDOG.create(DogApiService::class.java).apply {
+
+    }
 
 
 }
+
+
 
 

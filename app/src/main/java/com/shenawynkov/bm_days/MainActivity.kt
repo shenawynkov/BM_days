@@ -1,82 +1,67 @@
 package com.shenawynkov.bm_days
 
-import Contact
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.lifecycleScope
-import com.shenawynkov.bm_days.networking.RetrofitClient
+import androidx.activity.viewModels
+import com.shenawynkov.bm_days.data.DB.PostsDB
+import com.shenawynkov.bm_days.data.repo.PostsRepo
 import com.shenawynkov.bm_days.ui.theme.BM_daysTheme
-import contacts
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import com.shenawynkov.bm_days.ui.viewModel.MainViewModelFactory
+import com.shenawynkov.bm_days.ui.viewModel.MainViewmodel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
+import androidx.core.content.edit
 
 
 class MainActivity : ComponentActivity() {
-    val postState = MutableStateFlow<String>("")
+    private val viewmodel: MainViewmodel by viewModels()
+    {
+        MainViewModelFactory(repo)
+    }
+    private val repo: PostsRepo by lazy {
+        val db= PostsDB.getDB(context = applicationContext)
+        PostsRepo(db)
+    }
 
+    val pref:SharedPreferences  by lazy {
+        applicationContext.getSharedPreferences("dark", MODE_PRIVATE)
+    }
+    val darkState= MutableStateFlow(true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val contactsState = MutableStateFlow<List<Contact>>(emptyList())
+        darkState.value=pref.getBoolean("dark_mode",true)
+        viewmodel.fetchData()
 
         setContent {
             BM_daysTheme {
 
-                DogScreen(postState) {
-
-                    updatePhoto()
-                }
+              //  InstaScreen(viewmodel)
+                PrefScreen(darkState) { toggleDarkPref()}
 
             }
 
         }
 
 
-        updatePhoto()
-
-
-//        lifecycleScope.launch {
-//           postState.value = RetrofitClient.apiService.getPosts()
-//        }
-
-
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            fetchData().collect { newData ->
-//                contactsState.value += newData
-//            }
-//
-//
-//        }
 
 
     }
 
-    private fun updatePhoto() {
-        lifecycleScope.launch (Dispatchers.IO){
-            postState.value = RetrofitClient.dogApiService.getRandomPic().message
+    fun toggleDarkPref()
+    {
+        pref.edit(commit = true) {
+
+            putBoolean("dark_mode", !darkState.value)// write
+
+            darkState.value=
         }
 
-    }
-
-    private fun fetchData() = flow {
-        var start = 0
-        var end = 20
-        repeat(5)
-        {
-            delay(5000)
-            emit(contacts.subList(start, end))
-            start += 20
-            end += 20
-
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
 
     }
+
+
+
+
 }
+

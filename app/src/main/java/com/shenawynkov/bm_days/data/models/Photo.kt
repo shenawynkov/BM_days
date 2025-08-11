@@ -1,4 +1,4 @@
-package com.shenawynkov.bm_days.data
+package com.shenawynkov.bm_days.data.models
 
 import com.google.gson.annotations.SerializedName
 
